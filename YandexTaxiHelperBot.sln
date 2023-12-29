@@ -1,0 +1,46 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexTaxiHelperBot.App", "YandexTaxiHelperBot.App\YandexTaxiHelperBot.App.csproj", "{D5420D1D-553A-4B85-89BA-034A98DB4485}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexTaxiHelperBot.Integrations", "YandexTaxiHelperBot.Integrations\YandexTaxiHelperBot.Integrations.csproj", "{FD9BBDB4-516C-4B26-848A-70D5B4342CD5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexTaxiHelperBot.Repository", "YandexTaxiHelperBot.Repository\YandexTaxiHelperBot.Repository.csproj", "{DEF7B54E-64AD-4CD3-97F2-F3F6967F0A6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexTaxiHelperBot.Contracts", "YandexTaxiHelperBot.Contracts\YandexTaxiHelperBot.Contracts.csproj", "{D391CE42-A05E-468A-8D16-8A073A6CAF9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexTaxiHelperBot.Infrastructure", "YandexTaxiHelperBot.Infrastructure\YandexTaxiHelperBot.Infrastructure.csproj", "{D21BF5D4-B90C-45EA-B282-E4CDE57D14ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YandexTaxiHelperBot.Core", "YandexTaxiHelperBot.Core\YandexTaxiHelperBot.Core.csproj", "{A2CD859E-5FFE-4D58-B16F-0FAB05FD72A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D5420D1D-553A-4B85-89BA-034A98DB4485}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5420D1D-553A-4B85-89BA-034A98DB4485}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5420D1D-553A-4B85-89BA-034A98DB4485}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5420D1D-553A-4B85-89BA-034A98DB4485}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD9BBDB4-516C-4B26-848A-70D5B4342CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD9BBDB4-516C-4B26-848A-70D5B4342CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD9BBDB4-516C-4B26-848A-70D5B4342CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD9BBDB4-516C-4B26-848A-70D5B4342CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DEF7B54E-64AD-4CD3-97F2-F3F6967F0A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEF7B54E-64AD-4CD3-97F2-F3F6967F0A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEF7B54E-64AD-4CD3-97F2-F3F6967F0A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEF7B54E-64AD-4CD3-97F2-F3F6967F0A6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D391CE42-A05E-468A-8D16-8A073A6CAF9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D391CE42-A05E-468A-8D16-8A073A6CAF9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D391CE42-A05E-468A-8D16-8A073A6CAF9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D391CE42-A05E-468A-8D16-8A073A6CAF9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D21BF5D4-B90C-45EA-B282-E4CDE57D14ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D21BF5D4-B90C-45EA-B282-E4CDE57D14ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D21BF5D4-B90C-45EA-B282-E4CDE57D14ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D21BF5D4-B90C-45EA-B282-E4CDE57D14ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2CD859E-5FFE-4D58-B16F-0FAB05FD72A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2CD859E-5FFE-4D58-B16F-0FAB05FD72A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2CD859E-5FFE-4D58-B16F-0FAB05FD72A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2CD859E-5FFE-4D58-B16F-0FAB05FD72A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions">
+        <HintPath>..\..\..\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.11\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Quartz" Version="3.8.0" />
+      <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.8.0" />
+      <PackageReference Include="Quartz.Extensions.Hosting" Version="3.8.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\YandexTaxiHelperBot.Core\YandexTaxiHelperBot.Core.csproj" />
+      <ProjectReference Include="..\YandexTaxiHelperBot.Integrations\YandexTaxiHelperBot.Integrations.csproj" />
+    </ItemGroup>
+
+</Project>
