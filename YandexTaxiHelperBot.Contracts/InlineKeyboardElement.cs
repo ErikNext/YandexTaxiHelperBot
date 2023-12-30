@@ -1,3 +1,3 @@
-﻿namespace YandexTaxiHelperBot.App.Extensions;
+﻿namespace YandexTaxiHelperBot.Contracts;
 
-public record InlineKeyboardElement(string Text, string CallbackData);
+public record InlineKeyboardElement(string Text, string CallbackData, string? Url = null);

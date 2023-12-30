@@ -78,14 +78,6 @@ public class YandexGoApi
     }
 }
 
-public static class Extensions
-{
-    public static string ToStringWithPoint(this double number)
-    {
-        return number.ToString("G", CultureInfo.InvariantCulture);
-    }
-}
-
 public class RouteInfo
 {
     public double Price { get; set; }

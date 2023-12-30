@@ -4,4 +4,5 @@ public class YandexGoApiConfiguration
 {
     public string ApiToken { get; set; } = default!;
     public string Clid { get; set; } = default!;
+    public string ReferalCode { get; set; } = default!;
 }

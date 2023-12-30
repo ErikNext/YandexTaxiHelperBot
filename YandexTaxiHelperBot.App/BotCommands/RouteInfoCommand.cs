@@ -178,7 +178,9 @@ public class RouteInfoMode : ModeBase
         await SenderService.SendOrEditInlineKeyboard(user, 
             $"Цена в данную минуту: *{_route.LastPrice} руб.*\n" +
             $"Минимально возможная цена: *{_route.MinimalPrice} руб.*" +
-            $"\n\nВыберите метод отслеживания",
+            $"\n\nВыберите метод отслеживания\n\n" +
+            $"*По изменению цены* - если цена будет расти или падать вы будете уведомлены\n" +
+            $"*По лимиту* - если цена опуститься до заданного значения вы будете уведомлены",
             trackingMethodsElements, true, ParseMode.Markdown);
 
         _step++;

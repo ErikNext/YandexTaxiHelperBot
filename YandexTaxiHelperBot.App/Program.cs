@@ -15,7 +15,6 @@ using YandexTaxiHelperBot.Repository.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddHostedService<StartHostedService>();
 builder.Services.AddSingleton<BotMessageHandler>();
 builder.Services.AddSingleton<HandleUpdateService>();

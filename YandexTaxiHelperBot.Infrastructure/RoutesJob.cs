@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
-using MongoDB.Bson;
+﻿using Microsoft.Extensions.Logging;
 using Quartz;
-using YandexTaxiHelperBot.App.Extensions;
 using YandexTaxiHelperBot.Contracts;
 using YandexTaxiHelperBot.Core.Services.RoutesService;
 using YandexTaxiHelperBot.Integrations.YandexGoApi;
@@ -17,8 +14,10 @@ public class RoutesJob : IJob
     private readonly RoutesService _routesService;
     private readonly YandexGoApi _yandexGoApi;
 
-    private readonly InlineKeyboardElement _commandCancelTrackingElemenet =
-        new InlineKeyboardElement("Остановить", "StopRouteTrackingCommand");
+    private List<InlineKeyboardElement> _buttons = new()
+    {
+        new InlineKeyboardElement("Остановить", "StopRouteTrackingCommand")
+    };
 
     public RoutesJob(ILogger<RoutesJob> logger, 
         RoutesService service, 
@@ -42,6 +41,9 @@ public class RoutesJob : IJob
 
             if (currentRouteInfo == null)
                 break;
+
+            _buttons.Add(new InlineKeyboardElement("Заказать", "", route.LinkForOrder));
+            _buttons.Reverse();
             
             var process = route.Method switch
             {
@@ -62,21 +64,18 @@ public class RoutesJob : IJob
         if (Math.Abs(priceChange) >= route.TrackingPrice)
         {
             string message = "";
+            string wherePriceMove = "";
             
             if (priceChange > 0)
-            {
-                message = $"Цена упала \u2b07\ufe0f более чем на {route.TrackingPrice} руб." +
-                                 $"\nНовая цена: {currentRouteInfo.Price}\n" +
-                                 $"\nСтарая цена: {route.LastPrice}";  
-            }
+                wherePriceMove = "упала \u2b07\ufe0f";
             else if (priceChange < 0)
-            {
-                message = $"Цена поднялась \u2b06\ufe0f более чем на {route.TrackingPrice} руб." +
-                                 $"\nНовая цена: {currentRouteInfo.Price}\n" +
-                                 $"\nСтарая цена: {route.LastPrice}";  
-            }
-
-            await _notificationService.SendMessageWithButton(route.UserId, message, _commandCancelTrackingElemenet);
+                wherePriceMove = "поднялась \u2b06\ufe0f";
+            
+            message = $"Цена {wherePriceMove} более чем на {route.TrackingPrice} руб." +
+                      $"\nНовая цена: {currentRouteInfo.Price} руб.\n" +
+                      $"\nСтарая цена: {route.LastPrice} руб.";  
+            
+            await _notificationService.SendMessageWithButtons(route.UserId, message, _buttons);
         }
         
         route.LastPrice = currentRouteInfo.Price;
@@ -90,9 +89,9 @@ public class RoutesJob : IJob
         
         if (currentRouteInfo.Price <= route.TrackingPrice)
         {
-            await _notificationService.SendMessageWithButton(route.UserId, 
+            await _notificationService.SendMessageWithButtons(route.UserId, 
                 $"Цена достигла заданного лимита. Текущая цена: {currentRouteInfo.Price} руб.", 
-                _commandCancelTrackingElemenet);
+                _buttons);
 
             await _routesService.Delete(route.Id);
         }

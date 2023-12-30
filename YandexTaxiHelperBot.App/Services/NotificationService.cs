@@ -1,7 +1,4 @@
-﻿using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using YandexTaxiHelperBot.App.Extensions;
-using YandexTaxiHelperBot.Contracts;
+﻿using YandexTaxiHelperBot.Contracts;
 
 namespace YandexTaxiHelperBot.App.Services;
 
@@ -23,12 +20,10 @@ public class NotificationService : INotificationService
         await _sender.SendMessage(user.TelegramId, message);
     }
     
-    public async Task SendMessageWithButton(string userId, string message, InlineKeyboardElement element)
+    public async Task SendMessageWithButtons(string userId, string message, List<InlineKeyboardElement> elements)
     {
         var user = await _usersService.GetOrCreate(userId);
 
-        var elements = new List<InlineKeyboardElement>() { element };
-        
         await _sender.SendInlineKeyboard(user, message, true, elements);
     }
 }

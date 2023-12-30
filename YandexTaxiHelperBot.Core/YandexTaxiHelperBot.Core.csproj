@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\YandexTaxiHelperBot.Contracts\YandexTaxiHelperBot.Contracts.csproj" />
+      <ProjectReference Include="..\YandexTaxiHelperBot.Integrations\YandexTaxiHelperBot.Integrations.csproj" />
       <ProjectReference Include="..\YandexTaxiHelperBot.Repository\YandexTaxiHelperBot.Repository.csproj" />
     </ItemGroup>
 

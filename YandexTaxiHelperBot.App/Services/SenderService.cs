@@ -5,6 +5,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 using YandexTaxiHelperBot.App.BotCommands;
 using YandexTaxiHelperBot.App.Extensions;
 using YandexTaxiHelperBot.App.Models;
+using YandexTaxiHelperBot.Contracts;
 
 namespace YandexTaxiHelperBot.App.Services;
 
@@ -50,6 +51,10 @@ public class SenderService
         foreach (var item in keyboardElements)
         {
             var button = InlineKeyboardButton.WithCallbackData(item.Text, item.CallbackData);
+            
+            if (item.Url != null)
+                button.Url = item.Url;
+            
             buttons.Add(new[] { button });
         }
 
@@ -107,6 +112,10 @@ public class SenderService
         foreach (var item in keyboardElements)
         {
             var button = InlineKeyboardButton.WithCallbackData(item.Text, item.CallbackData);
+
+            if (item.Url != null)
+                button.Url = item.Url;
+            
             buttons.Add(new[] { button });
         }
 

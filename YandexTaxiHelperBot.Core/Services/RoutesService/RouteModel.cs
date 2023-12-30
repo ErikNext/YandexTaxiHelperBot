@@ -13,6 +13,16 @@ public class RouteModel
     public double LastPrice { get; set; }
     public double MinimalPrice { get; set; }
     public TrackingMethod Method { get; set; }
+    
+    public string LinkForOrder => "https://3.redirect.appmetrica.yandex.com/route?" +
+                                    $"start-lat={DeparturePoint.Latitude.ToStringWithPoint()}&" +
+                                    $"start-lon={DeparturePoint.Longitude.ToStringWithPoint()}&" +
+                                    $"end-lat={DestinationPoint.Latitude.ToStringWithPoint()}&" +
+                                    $"end-lon={DestinationPoint.Longitude.ToStringWithPoint()}&" +
+                                    $"tariffClass={Class.ToString()}&" +
+                                    $"ref=4709923&" +
+                                    $"appmetrica_tracking_id=1178268795219780156&" +
+                                    $"";
     public DateTime CreatedDate { get; set; }
 
     public RouteModel(string id)

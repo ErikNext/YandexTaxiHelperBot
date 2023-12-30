@@ -16,7 +16,8 @@ public class MainMenuCommand : CommandBase
     protected override Task ExecuteInternal(ITelegramBotClient telegramBotClient, UserModel user, string? data = default)
     {
         user.CurrentMode = null;
-        return Sender.SendAllAvailableCommands(user, "Все команды: ");
+        return Sender.SendAllAvailableCommands(user, "Бот отследит стоимость на поездку Yandex taxi " +
+                                                     "и уведомит вас выбранным способом!");
     }
 
     public override Task<bool> Filter(UserModel user)
