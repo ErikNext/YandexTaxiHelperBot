@@ -1,4 +1,5 @@
-﻿using YandexTaxiHelperBot.Contracts;
+﻿using Telegram.Bot.Types.Enums;
+using YandexTaxiHelperBot.Contracts;
 
 namespace YandexTaxiHelperBot.App.Services;
 
@@ -19,11 +20,15 @@ public class NotificationService : INotificationService
 
         await _sender.SendMessage(user.TelegramId, message);
     }
-    
-    public async Task SendMessageWithButtons(string userId, string message, List<InlineKeyboardElement> elements)
+
+    public async Task SendMessageWithButtons(string userId, string message, List<InlineKeyboardElement> elements,
+        bool removeLastUserMessage = false)
     {
         var user = await _usersService.GetOrCreate(userId);
+        
+        if (removeLastUserMessage && user.LastReceivedMessage != null)
+            await _sender.RemoveMessage(user, user.LastReceivedMessage.MessageId);
 
-        await _sender.SendInlineKeyboard(user, message, true, elements);
+        await _sender.SendInlineKeyboard(user, message, true, elements, ParseMode.Markdown);
     }
 }

@@ -39,7 +39,8 @@ public class SenderService
         UserModel user,
         string message,
         bool withMenu,
-        ICollection<InlineKeyboardElement>? keyboardElements = null)
+        ICollection<InlineKeyboardElement>? keyboardElements = null,
+        ParseMode parseMode = ParseMode.Html)
     {
         keyboardElements ??= new List<InlineKeyboardElement>();
         
@@ -60,7 +61,8 @@ public class SenderService
 
         var sentMessage = await _botClient.SendTextMessageAsync(chatId: user.TelegramId,
             text: message,
-            replyMarkup: new InlineKeyboardMarkup(buttons));
+            replyMarkup: new InlineKeyboardMarkup(buttons),
+            parseMode: parseMode);
 
         user.LastReceivedMessage = sentMessage;
     }

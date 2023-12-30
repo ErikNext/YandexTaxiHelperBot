@@ -71,11 +71,11 @@ public class RoutesJob : IJob
             else if (priceChange < 0)
                 wherePriceMove = "поднялась \u2b06\ufe0f";
             
-            message = $"Цена {wherePriceMove} более чем на {route.TrackingPrice} руб." +
-                      $"\nНовая цена: {currentRouteInfo.Price} руб.\n" +
-                      $"\nСтарая цена: {route.LastPrice} руб.";  
+            message = $"Цена {wherePriceMove} более чем на {route.TrackingPrice} руб.\n\n" +
+                      $"*Новая цена: {currentRouteInfo.Price} руб.*" +
+                      $"\n_Старая цена: {route.LastPrice} руб._";  
             
-            await _notificationService.SendMessageWithButtons(route.UserId, message, _buttons);
+            await _notificationService.SendMessageWithButtons(route.UserId, message, _buttons, true);
         }
         
         route.LastPrice = currentRouteInfo.Price;
@@ -91,7 +91,7 @@ public class RoutesJob : IJob
         {
             await _notificationService.SendMessageWithButtons(route.UserId, 
                 $"Цена достигла заданного лимита. Текущая цена: {currentRouteInfo.Price} руб.", 
-                _buttons);
+                _buttons, true);
 
             await _routesService.Delete(route.Id);
         }
