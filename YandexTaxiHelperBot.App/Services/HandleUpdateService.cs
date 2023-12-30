@@ -73,7 +73,8 @@ public class HandleUpdateService
     {
         if (user.Input.Raw != null && _commands.TryGetValue(user.Input.Raw!, out var command))
         {
-            _logger.LogInformation($"User: '@{user.Username}' execute command: '{command.Title}'"); 
+            _logger.LogInformation($"{DateTime.UtcNow} User: '@{user.Username}' execute command: " +
+                                   $"'{command.Title}'"); 
             return command.Execute(botClient, user, user.Input.Raw);
         }
         
@@ -82,7 +83,8 @@ public class HandleUpdateService
 
         if (_commands.TryGetValue(nameof(MainMenuCommand), out var mainMenucommand))
         {
-            _logger.LogInformation($"User: '@{user.Username}' execute command: '{mainMenucommand.Title}'"); 
+            _logger.LogInformation($"{DateTime.UtcNow} User: '@{user.Username}' execute command: " +
+                                   $"'{mainMenucommand.Title}'"); 
              return mainMenucommand.Execute(botClient, user, user.Input.Raw);
         }
 
