@@ -1,8 +1,5 @@
-﻿using Microsoft.Net.Http.Headers;
-using MongoDB.Driver.Linq;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
-using YandexTaxiHelperBot.App.Extensions;
 using YandexTaxiHelperBot.App.Models;
 using YandexTaxiHelperBot.App.Services;
 using YandexTaxiHelperBot.Contracts;
@@ -27,7 +24,13 @@ public class CurrentTrackingCommand : CommandBase
         var route = await _routesService.GetUserTracking(user.Id);
 
         if (route == null)
+        {
+            await Sender.SendOrEditInlineKeyboard(user, "Отслеживание истекло..",
+                null,
+                true, ParseMode.Markdown);
+            
             return;
+        }
         
         string trackingMethodStr = route.Method switch
         {
