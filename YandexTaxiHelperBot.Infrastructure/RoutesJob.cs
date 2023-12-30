@@ -90,7 +90,7 @@ public class RoutesJob : IJob
         if (currentRouteInfo.Price <= route.TrackingPrice)
         {
             await _notificationService.SendMessageWithButtons(route.UserId, 
-                $"Цена достигла заданного лимита. Текущая цена: {currentRouteInfo.Price} руб.", 
+                $"Цена достигла заданного лимита. Текущая цена: *{currentRouteInfo.Price} руб.*", 
                 _buttons, true);
 
             await _routesService.Delete(route.Id);

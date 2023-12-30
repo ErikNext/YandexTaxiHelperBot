@@ -84,7 +84,7 @@ public class RouteInfoMode : ModeBase
         _route = new RouteModel(Ulid.NewUlid().ToString());
         
         await SenderService.SendOrEditInlineKeyboard(user, 
-            "*Отправьте пункт отправления*\n" +
+            "*Пожалуйста, укажите начальную точку маршрута*\n" +
             "_скрепка \u27a1\ufe0f локация_", 
             null, true, ParseMode.Markdown);
 
@@ -106,7 +106,7 @@ public class RouteInfoMode : ModeBase
         await SenderService.RemoveMessage(user, user.LastSendMessage.MessageId);
         
         await SenderService.SendOrEditInlineKeyboard(user, 
-            "*Отлично! Отправьте пункт назначения*\n" +
+            "*Отлично! Теперь укажите конечную точку маршрута*\n" +
             "_скрепка \u27a1\ufe0f локация_", 
             null, true, ParseMode.Markdown);
         
@@ -133,7 +133,7 @@ public class RouteInfoMode : ModeBase
         
         await SenderService.RemoveMessage(user, user.LastSendMessage.MessageId);
         await SenderService.SendOrEditInlineKeyboard(user,
-            $"Локации заданы! Выберите *класс такси:*",
+            $"Точки заданы! Пожалуйста выберите *класс такси:*",
             taxiClassesElements, true, ParseMode.Markdown);
 
         _step++;
@@ -179,8 +179,8 @@ public class RouteInfoMode : ModeBase
             $"Цена в данную минуту: *{_route.LastPrice} руб.*\n" +
             $"Минимально возможная цена: *{_route.MinimalPrice} руб.*" +
             $"\n\nВыберите метод отслеживания\n\n" +
-            $"*По изменению цены* - если цена будет расти или падать вы будете уведомлены\n" +
-            $"*По лимиту* - если цена опуститься до заданного значения вы будете уведомлены",
+            $"*По изменению цены* - вы будете уведомлены, если цена начнет изменяться (расти или падать).\n" +
+            $"*По лимиту* - вы будете уведомлены, когда цена достигнет заданного вами значения.",
             trackingMethodsElements, true, ParseMode.Markdown);
 
         _step++;
@@ -224,7 +224,7 @@ public class RouteInfoMode : ModeBase
         if (_route.Method == TrackingMethod.ByLimit)
             message = $"Вы будете уведомлены, когда цена опустится до {_route.TrackingPrice} руб.";
         else if (_route.Method == TrackingMethod.ByPriceChange)
-            message = $"Вы будете уведомлены, при изменении цены в {_route.TrackingPrice} руб.";
+            message = $"Вы будете уведомлены при изменении цены в {_route.TrackingPrice} руб.";
 
         await _routesService.Create(_route, user.Id);
         
