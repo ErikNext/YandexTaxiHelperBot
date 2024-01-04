@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using YandexTaxiHelperBot.Repository.Routes;
+﻿using YandexTaxiHelperBot.Repository.Routes;
 
 namespace YandexTaxiHelperBot.Core.Services.RoutesService;
 

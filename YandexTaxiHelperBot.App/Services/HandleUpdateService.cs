@@ -3,6 +3,7 @@ using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using YandexTaxiHelperBot.App.BotCommands;
+using YandexTaxiHelperBot.App.Extensions;
 using YandexTaxiHelperBot.App.Models;
 
 namespace YandexTaxiHelperBot.App.Services;
@@ -60,7 +61,11 @@ public class HandleUpdateService
     private async Task BotOnCallbackQueryReceived(CallbackQuery callbackQuery, ITelegramBotClient botClient)
     {
         var user = await _usersService.GetOrCreate(callbackQuery.From.Id, callbackQuery.From.Username);
-        user.Input.Raw = callbackQuery.Data;
+
+        var rawAndPayload = callbackQuery.Data.ToKeyValuePairs();
+        
+        user.Input.Raw = rawAndPayload.Key;
+        user.Input.Payload = rawAndPayload.Value;
         
         await UserAction(user, botClient);
     }

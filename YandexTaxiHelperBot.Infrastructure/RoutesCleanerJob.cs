@@ -18,6 +18,6 @@ public class RoutesCleanerJob : IJob
 
     public Task Execute(IJobExecutionContext context)
     { 
-        return _routesService.DeleteRoutesCreatedSometimeAgo(1);
+        return _routesService.DeleteRoutesCreatedSometimeAgo(3);
     }
 }

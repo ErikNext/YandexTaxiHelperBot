@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using YandexTaxiHelperBot.App;
 using YandexTaxiHelperBot.App.Extensions;
 using YandexTaxiHelperBot.App.Services;
@@ -10,6 +7,7 @@ using YandexTaxiHelperBot.Core.Services.RoutesService;
 using YandexTaxiHelperBot.Infrastructure;
 using YandexTaxiHelperBot.Integrations.YandexGoApi;
 using YandexTaxiHelperBot.Repository;
+using YandexTaxiHelperBot.Repository.Address;
 using YandexTaxiHelperBot.Repository.Routes;
 using YandexTaxiHelperBot.Repository.Users;
 
@@ -23,6 +21,7 @@ builder.Services.AddSingleton<UsersService>();
 builder.Services.AddSingleton<YandexGoApi>();
 builder.Services.AddSingleton<RoutesService>();
 builder.Services.AddSingleton<IUserDatabase, UserMongoDatabase>();
+builder.Services.AddSingleton<IAddressesDatabase, AddressesMongoDatabase>();
 builder.Services.AddSingleton<IRoutesDatabase, RoutesMongoDatabase>();
 builder.Services.AddSingleton<INotificationService, NotificationService>();
 
@@ -34,6 +33,7 @@ builder.Services.Configure<BotConfiguration>(builder.Configuration.GetSection("B
 builder.Services.Configure<YandexGoApiConfiguration>(builder.Configuration.GetSection("YandexGoApiConfiguration"));
 builder.Services.Configure<UserDbConfig>(builder.Configuration.GetSection(UserDbConfig.Section));
 builder.Services.Configure<RouteForTrackingDbConfig>(builder.Configuration.GetSection(RouteForTrackingDbConfig.Section));
+builder.Services.Configure<AddressDbConfig>(builder.Configuration.GetSection(AddressDbConfig.Section));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

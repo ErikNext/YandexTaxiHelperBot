@@ -39,13 +39,10 @@ public class CurrentTrackingCommand : CommandBase
             _ => ""
         };
 
-        var finishTime  = TimeSpan.FromHours(1) - (DateTime.UtcNow - route.CreatedDate);
-        
         string message = "Текущее отслеживание:\n\n" +
                          $"Цена: *{route.LastPrice} руб.*\n" +
                          $"Минимальная цена: *{route.MinimalPrice} руб.*\n\n" +
-                         $"Метод трекинга:\n{trackingMethodStr}\n\n" +
-                         $"Отслеживание сгорит через: *{finishTime.Minutes:D2} мин*";
+                         $"Метод трекинга:\n{trackingMethodStr}";
 
         var keyboardElements = new List<InlineKeyboardElement>();
         
