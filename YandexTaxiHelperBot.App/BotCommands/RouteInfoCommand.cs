@@ -4,7 +4,9 @@ using Telegram.Bot.Types.Enums;
 using YandexTaxiHelperBot.App.Models;
 using YandexTaxiHelperBot.App.Services;
 using YandexTaxiHelperBot.Contracts;
+using YandexTaxiHelperBot.Core.Services.AddressesService;
 using YandexTaxiHelperBot.Core.Services.RoutesService;
+using YandexTaxiHelperBot.Integrations.YandexGeoApi;
 using YandexTaxiHelperBot.Integrations.YandexGoApi;
 using YandexTaxiHelperBot.Repository.Address;
 
@@ -14,22 +16,26 @@ public class RouteInfoCommand : CommandBase
 {
     private readonly YandexGoApi _yandexGoApi;
     private readonly RoutesService _routesService;
-    private readonly IAddressesDatabase _addressesDatabase;
+    private readonly AddressesService _addressesService;
+    private readonly YandexGeoApi _yandexGeoApi;
     
     public RouteInfoCommand(SenderService sender, YandexGoApi yandexGoApi, 
         RoutesService routesService, 
-        IAddressesDatabase addressesDatabase) : base(sender)
+        AddressesService addressesService, YandexGeoApi yandexGeoApi) : base(sender)
     {
         _yandexGoApi = yandexGoApi;
         _routesService = routesService;
-        _addressesDatabase = addressesDatabase;
+        _addressesService = addressesService;
+        _yandexGeoApi = yandexGeoApi;
     }
 
     public override string Title => "Отслеживать маршрут";
     public override string Key => nameof(RouteInfoCommand);
     protected override Task ExecuteInternal(ITelegramBotClient telegramBotClient, UserModel user, string? data = default)
     {
-        user.CurrentMode = new RouteInfoMode(Sender, telegramBotClient, _yandexGoApi, _routesService, _addressesDatabase);
+        user.CurrentMode = new RouteInfoMode(Sender, telegramBotClient, _yandexGoApi, _routesService, 
+            _addressesService, _yandexGeoApi);
+        
         return user.CurrentMode.Execute(user);
     }
 
@@ -41,21 +47,21 @@ public class RouteInfoCommand : CommandBase
 
 public class RouteInfoMode : ModeBase
 {
-
     private readonly YandexGoApi _yandexGoApi;
+    private readonly YandexGeoApi _yandexGeoApi;
     private readonly RoutesService _routesService;
-    private readonly IAddressesDatabase _addressesDatabase;
-
+    private readonly AddressesService _addressesService;
+    
     private List<AddressDbModel>? _addresses = null!;
     private TrackRouteStep _step = TrackRouteStep.Initial;
     private RouteModel _route { get; set; }
 
-    private bool _isAddressFromSaved = false;
-    
     private List<InlineKeyboardElement> _taxiClassesElements = new List<InlineKeyboardElement>()
     {
         new ("Эконом", TaxiClass.econom.ToString()),
-        new ("Бизнес", TaxiClass.business.ToString()),
+        new ("Комфорт", TaxiClass.business.ToString()),
+        new ("Комфорт+", TaxiClass.comfortplus.ToString()),
+        new ("Бизнес", TaxiClass.vip.ToString()),
     };
     
     public override Task Execute(UserModel user)
@@ -68,7 +74,7 @@ public class RouteInfoMode : ModeBase
             TrackRouteStep.SetTaxiClass => SetTaxiClass(user),
             TrackRouteStep.SetTrackingMethod => SetTrackingMethod(user),
             TrackRouteStep.SetPrice => SetPrice(user),
-            TrackRouteStep.SetAddressFromSaved => SetAddressFromSaved(user),
+            TrackRouteStep.SetAddressFromHistory => SetAddressFromSaved(user),
             _ => throw new ArgumentException($"Invalid step value '{_step}' in {nameof(RouteInfoMode)}")
         };
 
@@ -96,16 +102,16 @@ public class RouteInfoMode : ModeBase
             await _routesService.Delete(userTracking.Id);
 
         _route = new RouteModel(Ulid.NewUlid().ToString());
-        _addresses = await _addressesDatabase.GetUserAddresses(user.Id);
+        _addresses = await _addressesService.GetUserAddresses(user.Id);
 
         var elements = new List<InlineKeyboardElement>();
 
-        if (_addresses != null)
-            elements.Add(new("Мои адреса", "MyAddresses"));
+        if (_addresses.Count != 0)
+            elements.Add(new("История", "HistoryAddresses"));
         
         await SenderService.SendOrEditInlineKeyboard(user, 
             "*Пожалуйста, укажите начальную точку маршрута*\n" +
-            "_скрепка \u27a1\ufe0f локация_", 
+            "_скрепка \u27a1\ufe0f локация_ или _введите адрес вручную_",
             elements, true, ParseMode.Markdown);
 
         _step++;
@@ -113,14 +119,14 @@ public class RouteInfoMode : ModeBase
     
     private async Task SetDeparturePoint(UserModel user)
     {
-        if (user.Input.Raw == "MyAddresses")
+        if (user.Input.Raw == "HistoryAddresses")
         {
-            _step = TrackRouteStep.SetAddressFromSaved;
+            _step = TrackRouteStep.SetAddressFromHistory;
             await PrintAddressesFromSaved(user);
             return;
         }
         
-        if (user.Input.Location == null) 
+        if (user.Input.Location == null && String.IsNullOrEmpty(user.Input.Raw))
         {
             await SenderService.SendOrEditInlineKeyboard(user, 
                 $"Некорректная локация, попробуйте еще раз", 
@@ -128,13 +134,31 @@ public class RouteInfoMode : ModeBase
             return;
         }
         
-        _route.DeparturePoint = user.Input.Location;
+        if (user.Input.Location == null && user.Input.Raw != null)
+        {
+            var location = await _yandexGeoApi.GetLocationByAddress(user.Input.Raw);
 
+            if (location == null)
+            {
+                await SenderService.SendOrEditInlineKeyboard(user, 
+                    $"Не удалось найти локацию по запросу: {user.Input.Raw}", 
+                    null, true);
+                return;
+            }
+            _route.DeparturePoint = location;
+        }
+        
+        else if (user.Input.Location != null)
+            _route.DeparturePoint = user.Input.Location;
+        
+        _route.DeparturePoint.Title = await _yandexGeoApi.GetAddressByLocation(_route.DeparturePoint);
+        
         await SenderService.RemoveMessage(user, user.LastSendMessage.MessageId);
         
         await SenderService.SendOrEditInlineKeyboard(user, 
+            $"{_route.DeparturePoint.Title}" +
             "*Отлично! Теперь укажите конечную точку маршрута*\n" +
-            "_скрепка \u27a1\ufe0f локация_", 
+            "_скрепка \u27a1\ufe0f локация_ или _введите адрес вручную_",
             null, true, ParseMode.Markdown);
         
         _step++;
@@ -142,7 +166,7 @@ public class RouteInfoMode : ModeBase
     
     private async Task SetDestinationPoint(UserModel user)
     {
-        if (user.Input.Location == null)
+        if (user.Input.Location == null && String.IsNullOrEmpty(user.Input.Raw))
         {
             await SenderService.SendOrEditInlineKeyboard(user, 
                 $"Некорректная локация, попробуйте еще раз", 
@@ -150,10 +174,28 @@ public class RouteInfoMode : ModeBase
             return;
         }
         
-        _route.DestinationPoint = user.Input.Location;
+        if (user.Input.Location == null && user.Input.Raw != null)
+        {
+            var location = await _yandexGeoApi.GetLocationByAddress(user.Input.Raw);
 
+            if (location == null)
+            {
+                await SenderService.SendOrEditInlineKeyboard(user, 
+                    $"Не удалось найти локацию по запросу: {user.Input.Raw}", 
+                    null, true);
+                return;
+            }
+            
+            _route.DestinationPoint = location;
+        }
+        else if (user.Input.Location != null)
+            _route.DestinationPoint = user.Input.Location;
+
+        _route.DestinationPoint.Title = await _yandexGeoApi.GetAddressByLocation(_route.DestinationPoint);
+        
         await SenderService.RemoveMessage(user, user.LastSendMessage.MessageId);
         await SenderService.SendOrEditInlineKeyboard(user,
+            $"{_route.DestinationPoint.Title}" +
             $"Точки заданы! Пожалуйста выберите *класс такси:*",
             _taxiClassesElements, true, ParseMode.Markdown);
 
@@ -249,15 +291,13 @@ public class RouteInfoMode : ModeBase
 
         await _routesService.Create(_route, user.Id);
 
-        var saveAddressCommandElement = new List<InlineKeyboardElement>();
-
-        if (!_isAddressFromSaved)
-            saveAddressCommandElement.Add(
-                new ("Сохранить адрес", $"{nameof(SaveAddressCommand)}"));
+        await _addressesService.Create(new AddressDbModel(Ulid.NewUlid().ToString(), user.Id, 
+            $"{_route.DeparturePoint.Title}➡️{_route.DestinationPoint.Title}",
+            _route.DeparturePoint, _route.DestinationPoint, DateTime.UtcNow));
         
         await SenderService.SendOrEditInlineKeyboard(user,
             message,
-            saveAddressCommandElement, 
+            null, 
             true);
     }
 
@@ -271,7 +311,7 @@ public class RouteInfoMode : ModeBase
         await SenderService.SendOrEditInlineKeyboard(user, "Ваши адреса",
             keyboardWithAddresses, true, ParseMode.Markdown);
 
-        _step = TrackRouteStep.SetAddressFromSaved;
+        _step = TrackRouteStep.SetAddressFromHistory;
     }
 
     private async Task SetAddressFromSaved(UserModel user)
@@ -290,7 +330,6 @@ public class RouteInfoMode : ModeBase
         _route.DeparturePoint = address.DeparturePoint;
 
         _step = TrackRouteStep.SetTaxiClass;
-        _isAddressFromSaved = true;
         
         await SenderService.SendOrEditInlineKeyboard(user,
             $"Адрес задан! Пожалуйста выберите *класс такси:*",
@@ -298,12 +337,13 @@ public class RouteInfoMode : ModeBase
     }
     
     public RouteInfoMode(SenderService sender, ITelegramBotClient tgBotClient, YandexGoApi yandexGoApi, 
-        RoutesService routesService, IAddressesDatabase addressesDatabase) 
+        RoutesService routesService, AddressesService addressesService, YandexGeoApi yandexGeoApi) 
         : base(sender, tgBotClient)
     {
         _yandexGoApi = yandexGoApi;
         _routesService = routesService;
-        _addressesDatabase = addressesDatabase;
+        _addressesService = addressesService;
+        _yandexGeoApi = yandexGeoApi;
     }
 }
 
@@ -316,5 +356,5 @@ enum TrackRouteStep : Byte
     SetTaxiClass,
     SetTrackingMethod,
     SetPrice,
-    SetAddressFromSaved
+    SetAddressFromHistory
 }

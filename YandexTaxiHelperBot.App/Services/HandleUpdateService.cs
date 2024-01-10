@@ -48,6 +48,8 @@ public class HandleUpdateService
     private async Task BotOnMessageReceived(Message message, ITelegramBotClient botClient)
     {
         var user = await _usersService.GetOrCreate(message.From.Id, message.From.Username);
+
+        user.Input.Location = null;
         
         if (message.Location != null)
             user.Input.Location = new Contracts.Location(message.Location.Latitude, message.Location.Longitude);

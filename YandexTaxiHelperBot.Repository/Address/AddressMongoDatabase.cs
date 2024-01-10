@@ -7,7 +7,7 @@ public interface IAddressesDatabase
 {
     Task Create(AddressDbModel model);
     Task<List<AddressDbModel>> GetUserAddresses(string userId);
-    Task Delete(string id);
+    Task Delete(string userId, string addressId);
 }
 
 public class AddressesMongoDatabase : IAddressesDatabase
@@ -32,8 +32,8 @@ public class AddressesMongoDatabase : IAddressesDatabase
         return _collection.Find(x => x.UserId == userId).ToListAsync();
     }
     
-    public Task Delete(string id)
+    public async Task Delete(string userId, string addressId)
     {
-        return _collection.DeleteOneAsync(x => x.Id == id);
+        await _collection.DeleteOneAsync(x => x.UserId == userId && x.Id == addressId);
     }
 }

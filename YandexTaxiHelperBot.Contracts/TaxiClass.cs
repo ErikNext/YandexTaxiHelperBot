@@ -4,5 +4,7 @@ public enum TaxiClass : byte
 {
     Unknown,
     econom,
-    business
+    business,
+    comfortplus,
+    vip
 }

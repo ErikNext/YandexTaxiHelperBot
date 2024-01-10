@@ -9,13 +9,20 @@ public class AddressDbModel
     public string Title { get; set; }
     public Location DeparturePoint { get; set; }
     public Location DestinationPoint { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public AddressDbModel(string id, string userId, string title, Location departurePoint, Location destinationPoint)
+    public AddressDbModel(string id, 
+        string userId, 
+        string title, 
+        Location departurePoint, 
+        Location destinationPoint, 
+        DateTime createdDate)
     {
         Id = id;
         UserId = userId;
         Title = title;
         DeparturePoint = departurePoint;
         DestinationPoint = destinationPoint;
+        CreatedDate = createdDate;
     }
 }

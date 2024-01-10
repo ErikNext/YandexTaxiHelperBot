@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using YandexTaxiHelperBot.Contracts;
@@ -54,13 +53,12 @@ public class YandexGoApi
 
                     double price = (double)firstOption["price"];
                     double minPrice = (double)firstOption["min_price"];
-                    double waitingTime = (double)firstOption["waiting_time"];
                     string className = (string)firstOption["class_name"];
                     string classText = (string)firstOption["class_text"];
                     string classLevel = (string)firstOption["class_level"];
                     string priceText = (string)firstOption["price_text"];
 
-                    routeInfo = new RouteInfo(price, minPrice, waitingTime, className, classText, classLevel,
+                    routeInfo = new RouteInfo(price, minPrice, className, classText, classLevel,
                         priceText);
                 }
                 else
@@ -82,19 +80,17 @@ public class RouteInfo
 {
     public double Price { get; set; }
     public double MinPrice { get; set; }
-    public double WaitingTime { get; set; }
     public string ClassName { get; set; }
     public string ClassText { get; set; }
     public string ClassLevel { get; set; }
     public string PriceText { get; set; }
 
     
-    public RouteInfo(double price, double minPrice, double waitingTime, string className, string classText, 
+    public RouteInfo(double price, double minPrice, string className, string classText, 
         string classLevel, string priceText)
     {
         Price = price;
         MinPrice = minPrice;
-        WaitingTime = waitingTime;
         ClassName = className;
         ClassText = classText;
         ClassLevel = classLevel;
