@@ -156,7 +156,6 @@ public class RouteInfoMode : ModeBase
         await SenderService.RemoveMessage(user, user.LastSendMessage.MessageId);
         
         await SenderService.SendOrEditInlineKeyboard(user, 
-            $"{_route.DeparturePoint.Title}" +
             "*Отлично! Теперь укажите конечную точку маршрута*\n" +
             "_скрепка \u27a1\ufe0f локация_ или _введите адрес вручную_",
             null, true, ParseMode.Markdown);
@@ -195,7 +194,6 @@ public class RouteInfoMode : ModeBase
         
         await SenderService.RemoveMessage(user, user.LastSendMessage.MessageId);
         await SenderService.SendOrEditInlineKeyboard(user,
-            $"{_route.DestinationPoint.Title}" +
             $"Точки заданы! Пожалуйста выберите *класс такси:*",
             _taxiClassesElements, true, ParseMode.Markdown);
 

@@ -45,10 +45,11 @@ public class CurrentTrackingCommand : CommandBase
                          $"Метод трекинга:\n{trackingMethodStr}";
 
         var keyboardElements = new List<InlineKeyboardElement>();
+        keyboardElements.Add(new InlineKeyboardElement("Заказать", "", route.LinkForOrder));
         
         if (StorageCommands.Commands.TryGetValue(nameof(StopRouteTrackingCommand), out var command))
             keyboardElements.Add(new InlineKeyboardElement(command.Title, command.Key));
-
+        
         await Sender.SendOrEditInlineKeyboard(user, message, keyboardElements, true, ParseMode.Markdown);
     }
 
